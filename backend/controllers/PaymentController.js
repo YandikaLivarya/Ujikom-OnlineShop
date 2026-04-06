@@ -416,3 +416,35 @@ exports.getOrderByResi = async (req, res) => {
     });
   }
 };
+
+// ============================================
+// GET ORDERS BY USER ID (Untuk User History)
+// ============================================
+exports.getUserOrders = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: 'User ID diperlukan'
+      });
+    }
+
+    const orders = await Order.find({ 'customer.userId': userId }).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      data: orders,
+      total: orders.length
+    });
+
+  } catch (error) {
+    console.error('❌ Error fetching user orders:', error.message);
+    res.status(500).json({
+      success: false,
+      message: 'Gagal mengambil data order user',
+      error: error.message
+    });
+  }
+};

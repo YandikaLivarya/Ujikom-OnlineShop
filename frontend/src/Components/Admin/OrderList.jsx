@@ -4,6 +4,8 @@ function OrderList() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
 
   // Fetch semua orders dari backend
@@ -56,6 +58,18 @@ function OrderList() {
     }
   };
 
+  // Fungsi untuk buka Details modal
+  const handleDetailsClick = (order) => {
+    setSelectedOrder(order);
+    setShowModal(true);
+  };
+
+  // Fungsi untuk tutup modal
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedOrder(null);
+  };
+
   return (
     <div className="animate-in fade-in duration-700">
       <div className="flex justify-between items-center mb-8">
@@ -99,7 +113,7 @@ function OrderList() {
                   </td>
                   <td className="px-8 py-6">
                     <p className="text-xs font-bold uppercase">{order.customer?.name || 'Unknown'}</p>
-                    <p className="text-[10px] text-gray-500 mt-1">{order.customer?.city || "Unknown City"}</p>
+                    <p className="text-[10px] text-gray-500 mt-1">{order.customer?.city || order.customer?.address || "No Location"}</p>
                   </td>
                   <td className="px-8 py-6">
                     <p className="text-xs font-bold text-gray-300">
@@ -122,7 +136,10 @@ function OrderList() {
                     </select>
                   </td>
                   <td className="px-8 py-6 text-right">
-                    <button className="text-[10px] font-black uppercase text-gray-500 hover:text-white border-b border-gray-700 hover:border-white transition-all">
+                    <button 
+                      onClick={() => handleDetailsClick(order)}
+                      className="text-[10px] font-black uppercase text-gray-500 hover:text-white border-b border-gray-700 hover:border-white transition-all cursor-pointer"
+                    >
                       Details
                     </button>
                   </td>
@@ -136,6 +153,119 @@ function OrderList() {
               )}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Modal Details */}
+      {showModal && selectedOrder && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Header */}
+            <div className="sticky top-0 bg-gradient-to-r from-lime-400 to-lime-500 px-8 py-6 flex justify-between items-center">
+              <h3 className="text-lg font-black text-black uppercase tracking-widest">
+                Order Details
+              </h3>
+              <button
+                onClick={closeModal}
+                className="text-black hover:bg-white/20 rounded-full w-8 h-8 flex items-center justify-center transition-all"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-8 text-white space-y-6">
+              {/* Order ID & Status */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-[10px] uppercase text-gray-500 font-black tracking-widest">Order ID</p>
+                  <p className="text-sm font-mono text-lime-400 mt-2">#{selectedOrder.resi}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase text-gray-500 font-black tracking-widest">Date</p>
+                  <p className="text-sm text-white mt-2">{selectedOrder.date}</p>
+                </div>
+              </div>
+
+              {/* Status */}
+              <div className="p-4 bg-white/5 border border-white/10 rounded-lg">
+                <p className="text-[10px] uppercase text-gray-500 font-black tracking-widest mb-2">Current Status</p>
+                <div className="flex items-center gap-3">
+                  <span className="px-4 py-2 bg-lime-400 text-black text-xs font-black rounded-full">
+                    {selectedOrder.status}
+                  </span>
+                  <span className="text-[10px] text-gray-400">
+                    Payment: <span className="text-lime-400 font-bold">{selectedOrder.paymentStatus}</span>
+                  </span>
+                </div>
+              </div>
+
+              {/* Customer Info */}
+              <div className="border-t border-white/10 pt-4">
+                <p className="text-[10px] uppercase text-gray-500 font-black tracking-widest mb-4">Customer Information</p>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <span className="text-gray-500">Name:</span> <span className="text-white font-bold ml-2">{selectedOrder.customer?.name}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Email:</span> <span className="text-white font-mono ml-2">{selectedOrder.customer?.email}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Phone:</span> <span className="text-white ml-2">{selectedOrder.customer?.phone || '-'}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">City:</span> <span className="text-white ml-2">{selectedOrder.customer?.city || 'N/A'}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Address:</span> <span className="text-white ml-2">{selectedOrder.customer?.address || '-'}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Items */}
+              <div className="border-t border-white/10 pt-4">
+                <p className="text-[10px] uppercase text-gray-500 font-black tracking-widest mb-4">
+                  Order Items ({selectedOrder.items?.length || 0})
+                </p>
+                <div className="space-y-3">
+                  {selectedOrder.items?.map((item, idx) => (
+                    <div key={idx} className="p-3 bg-white/5 border border-white/5 rounded-lg flex justify-between items-center">
+                      <div>
+                        <p className="text-xs font-bold text-white">{item.name}</p>
+                        <p className="text-[10px] text-gray-500 mt-1">Qty: {item.qty}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs font-mono text-lime-400">IDR {item.price?.toLocaleString()}</p>
+                        <p className="text-[10px] text-gray-500 mt-1">Total: IDR {(item.price * item.qty)?.toLocaleString()}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Total & Payment */}
+              <div className="border-t border-white/10 pt-4">
+                <div className="flex justify-between items-center text-lg font-black mb-2">
+                  <span>Total Paid:</span>
+                  <span className="text-lime-400">IDR {selectedOrder.totalPaid?.toLocaleString()}</span>
+                </div>
+                <div className="text-[10px] text-gray-500 mt-2">
+                  <p>Payment Method: {selectedOrder.paymentMethod || '-'}</p>
+                  <p>Invoice ID: {selectedOrder.invoiceId || '-'}</p>
+                </div>
+              </div>
+
+              {/* Close Button */}
+              <div className="border-t border-white/10 pt-4">
+                <button
+                  onClick={closeModal}
+                  className="w-full py-3 bg-lime-400 text-black font-black rounded-lg hover:bg-lime-500 transition-all uppercase text-sm"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

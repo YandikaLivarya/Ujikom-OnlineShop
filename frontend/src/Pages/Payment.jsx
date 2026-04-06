@@ -142,6 +142,10 @@ function Payment() {
 
       // 3.5 SIMPAN ORDER KE DATABASE (UNTUK ADMIN DASHBOARD)
       try {
+        // Ambil userId dari localStorage
+        const userData = JSON.parse(localStorage.getItem('user') || '{}');
+        const userId = userData._id || userData.id;
+        
         const orderPayload = {
           resi: `SKN-${trackingNumber}`,
           customer: {
@@ -149,7 +153,8 @@ function Payment() {
             email: email,
             phone: phone,
             city: shippingInfo.city,
-            address: shippingInfo.address
+            address: shippingInfo.address,
+            userId: userId || null
           },
           items: cartItems,
           totalPaid: total,

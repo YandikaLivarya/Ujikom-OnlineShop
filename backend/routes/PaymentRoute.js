@@ -31,6 +31,9 @@ router.get('/all-orders', paymentController.getAllOrders);
 // GET: Get order by resi (untuk track package)
 router.get('/order/:resi', paymentController.getOrderByResi);
 
+// GET: Get orders by user ID (untuk user order history)
+router.get('/user-orders/:userId', paymentController.getUserOrders);
+
 // PUT: Update order status (untuk admin)
 router.put('/update-order-status/:orderId', paymentController.updateOrderStatus);
 
