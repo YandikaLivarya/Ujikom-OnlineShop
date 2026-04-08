@@ -89,17 +89,21 @@ function DetailProduct() {
           {/* 1. BAGIAN KIRI: GALERI FOTO */}
           <div className="flex-1 space-y-4">
             <div className="aspect-[4/5] bg-[#1a1a1a] rounded-3xl overflow-hidden border border-white/5">
-              <img 
-                src={product.image} 
-                alt={product.name} 
-                className="w-full h-full object-cover shadow-2xl transition-transform duration-700 hover:scale-105"
-              />
+              {product.image ? (
+                <img 
+                  src={product.image} 
+                  alt={product.name} 
+                  className="w-full h-full object-cover shadow-2xl transition-transform duration-700 hover:scale-105"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-white/5 text-gray-600 text-lg">Product Image Not Available</div>
+              )}
             </div>
             {/* Thumbnail Foto Tambahan (Bisa dikembangkan nanti) */}
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="aspect-square bg-[#1a1a1a] rounded-xl overflow-hidden border border-white/5 opacity-50 hover:opacity-100 transition">
-                  <img src={product.image} alt="Angle" className="w-full h-full object-cover grayscale" />
+                  {product.image ? <img src={product.image} alt="Angle" className="w-full h-full object-cover grayscale" /> : <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">-</div>}
                 </div>
               ))}
             </div>
@@ -110,7 +114,7 @@ function DetailProduct() {
             <p className="text-lime-400 font-mono text-sm tracking-tighter mb-2 italic">
               // CATEGORY: {product.category || "UNSPECIFIED"}
             </p>
-            <h1 className="text-5xl md:text-6xl font-black uppercase italic leading-[0.9] mb-4 tracking-tighter">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase italic leading-[0.9] mb-4 tracking-tighter">
               {product.name}
             </h1>
             
@@ -161,7 +165,7 @@ function DetailProduct() {
             </div>
 
             {/* Info Tambahan */}
-            <div className="mt-12 grid grid-cols-2 gap-6 pt-10 border-t border-white/5">
+            <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-6 pt-10 border-t border-white/5">
               <div>
                 <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Shipping</p>
                 <p className="text-xs text-gray-400 mt-1 uppercase italic font-bold">Free for club members.</p>

@@ -61,14 +61,14 @@ function Cart() {
         </div>
 
         {cartItems.length > 0 ? (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-12">
             
             {/* 1. DAFTAR ITEM */}
             <div className="lg:col-span-2 space-y-8">
               {cartItems.map((item) => (
                 <div key={item._id} className="flex gap-6 bg-white/5 p-4 rounded-2xl border border-white/5 relative group">
                   <div className="w-24 h-32 md:w-32 md:h-40 bg-[#1a1a1a] rounded-xl overflow-hidden flex-shrink-0">
-                    <img src={item.image} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt={item.name} />
+                    {item.image ? <img src={item.image} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt={item.name} /> : <div className="w-full h-full flex items-center justify-center text-gray-600">-</div>}
                   </div>
 
                   <div className="flex flex-col justify-between py-2 w-full">
@@ -95,7 +95,7 @@ function Cart() {
 
             {/* 2. RINGKASAN PEMBAYARAN */}
             <div className="lg:col-span-1">
-              <div className="bg-white/5 border border-white/10 rounded-3xl p-8 sticky top-32">
+              <div className="bg-white/5 border border-white/10 rounded-3xl p-4 sm:p-8 sticky top-24 sm:top-32">
                 <h2 className="text-xl font-black uppercase mb-6 italic tracking-tighter">Order Summary</h2>
                 
                 <div className="space-y-4 text-sm font-medium">

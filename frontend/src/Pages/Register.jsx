@@ -14,8 +14,10 @@ const Register = () => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   });
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,23 +25,65 @@ const Register = () => {
       ...prevState,
       [name]: value
     }));
+    // Clear error saat user mulai ketik
+    setErrors(prev => ({
+      ...prev,
+      [name]: ''
+    }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.username.trim()) {
+      newErrors.username = "Full name is required";
+    }
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Email format is invalid";
+    }
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Confirm password is required";
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match!";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
     try {
-      await axios.post(`${API_URL}/api/auth/register`, formData, {
+      // Jangan kirim confirmPassword ke backend
+      const { confirmPassword, ...dataToSend } = formData;
+      
+      await axios.post(`${API_URL}/api/auth/register`, dataToSend, {
         headers: NGROK_HEADERS,
       });
-      alert("Registration successful!");
-
-      navigator('/Auth'); // Redirect to login page after successful registration 
-
+      alert("Registration successful! 🎉");
+      navigator('/Auth');
     } catch (error) {
       console.error("Registration failed:", error);
-      alert("Registration failed!");
+      alert(error.response?.data?.message || "Registration failed!");
     }
   };
+
+  // Cek apakah password cocok
+  const passwordsMatch = formData.password && formData.confirmPassword && formData.password === formData.confirmPassword;
+  const passwordsDontMatch = formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword;
+  const isFormValid = formData.username && formData.email && formData.password && formData.confirmPassword && passwordsMatch;
 
   return (
     <section className="min-h-screen bg-[#0f0f0f] flex items-center justify-center px-6 relative overflow-hidden">
@@ -68,12 +112,15 @@ const Register = () => {
     <label className="block text-[10px] font-black uppercase text-gray-500 mb-2 tracking-widest">Full Name</label>
     <input 
       type="text" 
-      name="username" // WAJIB ADA
+      name="username"
       placeholder="Your Name" 
-      value={formData.username} // Hubungkan ke state
-      onChange={handleChange}   // Hubungkan ke fungsi pencatat
-      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-lime-400 transition"
+      value={formData.username}
+      onChange={handleChange}
+      className={`w-full bg-white/5 border rounded-xl px-4 py-3 text-sm text-white outline-none transition ${
+        errors.username ? 'border-red-500 focus:border-red-500' : 'border-white/10 focus:border-lime-400'
+      }`}
     />
+    {errors.username && <p className="text-red-400 text-[9px] mt-1 font-bold uppercase">{errors.username}</p>}
   </div>
 
   {/* Input Email */}
@@ -85,12 +132,15 @@ const Register = () => {
       placeholder="name@email.com" 
       value={formData.email}
       onChange={handleChange}
-      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-lime-400 transition"
+      className={`w-full bg-white/5 border rounded-xl px-4 py-3 text-sm text-white outline-none transition ${
+        errors.email ? 'border-red-500 focus:border-red-500' : 'border-white/10 focus:border-lime-400'
+      }`}
     />
+    {errors.email && <p className="text-red-400 text-[9px] mt-1 font-bold uppercase">{errors.email}</p>}
   </div>
 
   {/* Password */}
-  <div className="grid grid-cols-2 gap-4">
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div>
       <label className="block text-[10px] font-black uppercase text-gray-500 mb-2 tracking-widest">Password</label>
       <input 
@@ -99,21 +149,48 @@ const Register = () => {
         placeholder="••••••••" 
         value={formData.password}
         onChange={handleChange}
-        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-lime-400 transition"
+        className={`w-full bg-white/5 border rounded-xl px-4 py-3 text-sm text-white outline-none transition ${
+          errors.password ? 'border-red-500 focus:border-red-500' : 'border-white/10 focus:border-lime-400'
+        }`}
       />
+      {errors.password && <p className="text-red-400 text-[9px] mt-1 font-bold uppercase">{errors.password}</p>}
     </div>
-    {/* Kolom Confirm Password bisa kamu tambahkan logic pengecekan nanti */}
+    
+    {/* Confirm Password dengan validasi */}
     <div>
-      <label className="block text-[10px] font-black uppercase text-gray-500 mb-2 tracking-widest">Confirm</label>
+      <label className="block text-[10px] font-black uppercase text-gray-500 mb-2 tracking-widest flex justify-between items-center">
+        <span>Confirm</span>
+        {passwordsMatch && formData.confirmPassword && <span className="text-lime-400 text-[8px]">✓ Match</span>}
+      </label>
       <input 
         type="password" 
+        name="confirmPassword"
         placeholder="••••••••" 
-        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-lime-400 transition"
+        value={formData.confirmPassword}
+        onChange={handleChange}
+        className={`w-full bg-white/5 border rounded-xl px-4 py-3 text-sm text-white outline-none transition ${
+          passwordsDontMatch ? 'border-red-500 focus:border-red-500' : 
+          passwordsMatch ? 'border-lime-400 focus:border-lime-400' : 
+          'border-white/10 focus:border-lime-400'
+        }`}
       />
+      {errors.confirmPassword && <p className="text-red-400 text-[9px] mt-1 font-bold uppercase">{errors.confirmPassword}</p>}
+      {passwordsMatch && !errors.confirmPassword && formData.confirmPassword && (
+        <p className="text-lime-400 text-[9px] mt-1 font-bold uppercase">✓ Passwords match perfectly!</p>
+      )}
     </div>
   </div>
 
-  <button type="submit" className="w-full bg-white text-black font-black py-4 rounded-xl uppercase tracking-widest text-sm hover:bg-lime-400 transition-all duration-300 shadow-[0_10px_20px_rgba(255,255,255,0.05)]">   Create Account
+  <button 
+    type="submit" 
+    disabled={!isFormValid}
+    className={`w-full font-black py-4 rounded-xl uppercase tracking-widest text-sm transition-all duration-300 shadow-[0_10px_20px_rgba(255,255,255,0.05)] ${
+      isFormValid 
+        ? 'bg-white text-black hover:bg-lime-400 cursor-pointer' 
+        : 'bg-gray-600/30 text-gray-500 cursor-not-allowed opacity-50'
+    }`}
+  >
+    {isFormValid ? 'Create Account' : 'Fill All Fields Correctly'}
   </button>
 </form>
     

@@ -22,8 +22,8 @@ export default function LoginAdmin() {
   };
 
   return (
-    <section className="min-h-screen bg-[#0f0f0f] flex items-center justify-center px-6">
-      <div className="max-w-md w-full bg-white/5 border border-white/10 p-10 rounded-[40px] shadow-2xl relative overflow-hidden">
+    <section className="min-h-screen bg-[#0f0f0f] flex items-center justify-center px-6 relative overflow-hidden">
+      <div className="max-w-md w-full bg-white/5 border border-white/10 p-6 sm:p-10 rounded-[40px] shadow-2xl relative overflow-hidden">
         {/* Dekorasi Akses */}
         <div className="absolute top-0 right-0 w-20 h-20 bg-lime-400/10 blur-2xl"></div>
         

@@ -76,7 +76,7 @@ const Profile = () => {
             <div className="max-w-6xl mx-auto">
                 
                 {/* Tab Navigation */}
-                <div className="flex gap-4 mb-8 border-b border-white/10 pb-4">
+                <div className="flex flex-wrap gap-2 sm:gap-4 mb-8 border-b border-white/10 pb-4 overflow-x-auto">
                     <button
                         onClick={() => setActiveTab('profile')}
                         className={`px-6 py-3 font-black uppercase text-xs tracking-widest transition-all ${

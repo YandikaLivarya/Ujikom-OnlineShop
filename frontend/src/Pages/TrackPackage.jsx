@@ -140,9 +140,9 @@ function TrackPackage() {
             </div>
 
             {/* Customer Info */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-8">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-6 mb-8">
               <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-4">Order Details</p>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <p className="text-[9px] text-gray-500 uppercase font-bold mb-1">Customer Name</p>
                   <p className="text-sm font-bold">{orderData.customer?.name || 'N/A'}</p>

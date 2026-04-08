@@ -106,11 +106,15 @@ function Collection() {
                 filteredProducts.map((item) => (
                   <div key={item._id} className="group cursor-pointer">
                     <div className="relative aspect-[4/5] overflow-hidden bg-[#1a1a1a] rounded-2xl border border-white/5 transition-all duration-500 group-hover:border-lime-400/50">
-                      <img 
-                        src={item.image} 
-                        alt={item.name}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-                      />
+                      {item.image ? (
+                        <img 
+                          src={item.image} 
+                          alt={item.name}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-white/5 text-gray-600">No Image</div>
+                      )}
                       <Link 
                         to={`/detail-product/${item._id}`}
                         className="absolute bottom-4 left-4 right-4 bg-white text-black py-3 rounded-xl text-[10px] font-black uppercase text-center opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300"

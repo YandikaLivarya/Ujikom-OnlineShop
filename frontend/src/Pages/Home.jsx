@@ -22,7 +22,7 @@ function Home() {
             <span className="inline-block bg-lime-400 text-black px-3 py-1 text-[10px] font-black uppercase mb-4 rotate-[-2deg]">
               New Drop: Urban Series
             </span>
-            <h2 className="text-5xl md:text-8xl font-black text-white leading-[0.9] uppercase italic tracking-tighter">
+            <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] uppercase italic tracking-tighter">
               Step Into <br /> 
               <span className="text-lime-400">The Future</span>
             </h2>

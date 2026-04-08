@@ -106,7 +106,7 @@ function Inventory() {
                   <tr key={item._id} className="hover:bg-white/5 transition group">
                     <td className="px-6 py-4 flex items-center gap-4">
                       <div className="w-12 h-12 bg-[#1a1a1a] rounded-xl overflow-hidden border border-white/10">
-                        <img src={item.image} className="object-cover w-full h-full" alt={item.name} />
+                        {item.image ? <img src={item.image} className="object-cover w-full h-full" alt={item.name} /> : <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">-</div>}
                       </div>
                       <span className="font-bold uppercase tracking-tighter">{item.name}</span>
                     </td>

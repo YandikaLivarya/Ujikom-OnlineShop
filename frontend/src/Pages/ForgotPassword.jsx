@@ -3,12 +3,11 @@ function ForgotPassword() {
   return (
    <section className="min-h-screen bg-[#0f0f0f] flex items-center justify-center px-6 relative overflow-hidden">
   {/* Ornamen Background (Sama dengan Login/Reg agar Senada) */}
-  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/5 blur-[150px] rounded-full"></div>
+  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[400px] md:w-[600px] h-[300px] sm:h-[400px] md:h-[600px] bg-blue-600/5 blur-[80px] sm:blur-[120px] md:blur-[150px] rounded-full"></div>
 
   <div className="w-full max-w-md z-10">
     {/* Card Utama */}
-    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[32px] p-10 shadow-2xl relative">
-      
+      <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[32px] p-6 sm:p-10 shadow-2xl relative">
       {/* Icon Gembok Terkunci */}
       <div className="flex justify-center mb-8">
         <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-3xl">

@@ -20,13 +20,13 @@ export default function OrderSuccess() {
     <section className="min-h-screen bg-[#0f0f0f] flex items-center justify-center px-6 py-20 relative overflow-hidden font-sans">
   
       {/* Efek Cahaya di Background */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-lime-400/5 blur-[120px] rounded-full"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[400px] md:w-[500px] h-[300px] sm:h-[400px] md:h-[500px] bg-lime-400/5 blur-[80px] sm:blur-[120px] rounded-full"></div>
 
       <div className="max-w-md w-full z-10 text-center">
         
         {/* Ikon Success Animatif */}
         <div className="mb-8 relative inline-block">
-          <div className="w-24 h-24 bg-lime-400 rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(217,249,157,0.3)] animate-pulse">
+          <div className="w-20 sm:w-24 h-20 sm:h-24 bg-lime-400 rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(217,249,157,0.3)] animate-pulse">
             <span className="text-black text-4xl font-black">✓</span>
           </div>
           <div className="absolute -top-2 -right-2 w-6 h-6 bg-white rotate-45 border-4 border-black"></div>

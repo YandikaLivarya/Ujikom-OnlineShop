@@ -51,11 +51,15 @@ function Katalog() {
               <div key={item._id} className="group relative">
                 {/* Box Gambar */}
                 <div className="relative aspect-[3/4] overflow-hidden bg-[#1a1a1a] rounded-2xl border border-white/5 transition-all duration-500 group-hover:border-lime-400/30 shadow-2xl">
-                  <img 
-                    src={item.image} 
-                    alt={item.name} 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
+                  {item.image ? (
+                    <img 
+                      src={item.image} 
+                      alt={item.name} 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-white/5 text-gray-600">No Image</div>
+                  )}
                   
                   {/* Overlay saat Hover */}
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
