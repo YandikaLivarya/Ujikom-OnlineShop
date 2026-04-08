@@ -1,12 +1,19 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useApiUrl } from "../hooks/useApiUrl";
+
+const NGROK_HEADERS = {
+  'ngrok-skip-browser-warning': 'true',
+  'x-ngrok-skip-browser-warning': 'true',
+};
 
 function DetailProduct() {
   const { id } = useParams(); // Mengambil ID dari URL
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const API_URL = useApiUrl();
   const addToCart = () => {
   // 1. Ambil data keranjang yang sudah ada di localStorage, atau buat array kosong jika belum ada
   const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -40,7 +47,9 @@ function DetailProduct() {
   useEffect(() => {
     const fetchProductDetail = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/products/${id}`);
+        const res = await axios.get(`${API_URL}/api/products/${id}`, {
+          headers: NGROK_HEADERS,
+        });
         setProduct(res.data);
       } catch (error) {
         console.error("Gagal mengambil detail produk:", error);

@@ -188,20 +188,67 @@ exports.handleWebhook = async (req, res) => {
       invoiceId: id,
       status: status,
       externalId: external_id,
+      amount: amount,
+      payment_method: payment_method
     });
 
     // Update order status di database berdasarkan invoice status
     if (status === 'PAID' || status === 'SETTLED') {
       console.log('✅ Payment successful:', external_id);
-      // TODO: Update order di MongoDB
+      
+      try {
+        // Cari order berdasarkan invoiceId
+        const order = await Order.findOneAndUpdate(
+          { invoiceId: id },
+          { 
+            paymentStatus: 'PAID',
+            updatedAt: Date.now(),
+            status: 'Shipped' // Ubah status order ke Shipped saat bayar
+          },
+          { new: true }
+        );
+
+        if (order) {
+          console.log('✅ Order updated successfully:', {
+            resi: order.resi,
+            paymentStatus: order.paymentStatus,
+            status: order.status
+          });
+        } else {
+          console.warn('⚠️ Order not found with invoiceId:', id);
+        }
+      } catch (updateError) {
+        console.error('❌ Error updating order:', updateError.message);
+      }
+
     } else if (status === 'EXPIRED') {
       console.log('⏰ Invoice expired:', external_id);
-      // TODO: Handle expired invoice
+      
+      try {
+        const order = await Order.findOneAndUpdate(
+          { invoiceId: id },
+          { 
+            paymentStatus: 'FAILED',
+            updatedAt: Date.now()
+          },
+          { new: true }
+        );
+
+        if (order) {
+          console.log('✅ Order marked as payment expired:', order.resi);
+        }
+      } catch (updateError) {
+        console.error('❌ Error marking order as expired:', updateError.message);
+      }
+
+    } else if (status === 'PENDING') {
+      console.log('⏳ Payment pending:', external_id);
+      // Jangan ubah apapun, tetap tunggu
     }
 
     res.status(200).json({
       success: true,
-      message: 'Webhook processed',
+      message: 'Webhook processed successfully',
     });
 
   } catch (error) {

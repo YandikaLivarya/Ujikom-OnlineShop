@@ -10,44 +10,53 @@ const paymentRoutes = require('./routes/PaymentRoute');
 dotenv.config();
 const app = express();
 
-// CORS configuration
-const corsOptions = {
-  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5174'],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-};
-
+// 1. MIDDLEWARE DASAR
 app.use(express.json());
-app.use(cors(corsOptions));
 
-// Debug middleware
+// 2. KONFIGURASI CORS SAPU JAGAT (Pasti Tembus)
+app.use(cors()); // Izinkan dasar dulu
+
 app.use((req, res, next) => {
-  console.log(`📨 ${req.method} ${req.path} from ${req.get('origin')}`);
+  // Izinkan origin mana saja (localhost atau ngrok)
+  const origin = req.headers.origin;
+  res.setHeader('Access-Control-Allow-Origin', origin || '*');
+  
+  // Izinkan semua method
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  
+  // Izinkan header khusus ngrok dan auth
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, ngrok-skip-browser-warning');
+  
+  // Penting untuk Ngrok: bypass warning page secara otomatis
+  res.setHeader('ngrok-skip-browser-warning', 'true');
+
+  // Handle request OPTIONS (Preflight) agar tidak diblokir browser
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
   next();
 });
 
+// 3. ROUTES
 app.use('/api/auth', authRoutes);
 app.use('/api/payment', paymentRoutes);
-
-app.get('/', (req, res) => {
-    res.send('API is running...');
-});
-
 app.use('/api/products', productRoutes);
 
-// KODE LAMA (Sebelum diperbaiki)
-//
+app.get('/', (req, res) => {
+    res.send('S*CKSOCKS API is running...');
+});
 
-
-
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/ujikomtest';
-// KODE YANG BENAR (Baru)
+// 4. DATABASE CONNECTION
 mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log('🔥 MongoDB Terhubung!'))
+    .then(() => {
+        console.log('🔥 MongoDB Terhubung!');
+        console.log('✅ CORS "Sapu Jagat" Aktif');
+    })
     .catch((err) => console.error('❌ Gagal Konek Database:', err));
 
-    const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`);
-    });
+// 5. RUN SERVER
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`🚀 Server S*CKSOCKS jalan di port ${PORT}`);
+    console.log(`🔗 Link Ngrok kamu harus diarahkan ke http://localhost:${PORT}`);
+});

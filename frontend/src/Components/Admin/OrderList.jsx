@@ -1,4 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { useApiUrl } from '../../hooks/useApiUrl';
+
+const NGROK_HEADERS = {
+  'ngrok-skip-browser-warning': 'true',
+  'x-ngrok-skip-browser-warning': 'true',
+};
 
 function OrderList() {
   const [orders, setOrders] = useState([]);
@@ -6,19 +12,29 @@ function OrderList() {
   const [error, setError] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const API_URL = useApiUrl();
 
-
-  // Fetch semua orders dari backend
   useEffect(() => {
     fetchOrders();
-    // Auto refresh setiap 5 detik
-    const interval = setInterval(fetchOrders, 5000);
+    const interval = setInterval(fetchOrders, 3000);
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (!showModal) return;
+    const modalInterval = setInterval(() => {
+      if (selectedOrder?.resi) {
+        fetchOrderDetail(selectedOrder.resi);
+      }
+    }, 2000);
+    return () => clearInterval(modalInterval);
+  }, [showModal, selectedOrder?.resi]);
+
   const fetchOrders = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/payment/all-orders');
+      const response = await fetch(`${API_URL}/api/payment/all-orders`, {
+        headers: NGROK_HEADERS,
+      });
       if (!response.ok) throw new Error('Failed to fetch orders');
       
       const result = await response.json();
@@ -34,13 +50,29 @@ function OrderList() {
     }
   };
 
-  // Fungsi untuk Update Status
+  const fetchOrderDetail = async (resi) => {
+    try {
+      const response = await fetch(`${API_URL}/api/payment/order/${resi}`, {
+        headers: NGROK_HEADERS,
+      });
+      if (!response.ok) return;
+      
+      const result = await response.json();
+      if (result.success) {
+        setSelectedOrder(result.data);
+      }
+    } catch (err) {
+      console.error('❌ Error fetching order detail:', err);
+    }
+  };
+
   const updateStatus = async (orderId, newStatus) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/payment/update-order-status/${orderId}`, {
+      const response = await fetch(`${API_URL}/api/payment/update-order-status/${orderId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          ...NGROK_HEADERS,
         },
         body: JSON.stringify({ status: newStatus })
       });
@@ -50,7 +82,7 @@ function OrderList() {
       const result = await response.json();
       if (result.success) {
         alert(`✅ Status order diperbarui ke: ${newStatus}`);
-        fetchOrders(); // Refresh orders
+        fetchOrders();
       }
     } catch (err) {
       console.error('❌ Error updating status:', err);
@@ -58,13 +90,11 @@ function OrderList() {
     }
   };
 
-  // Fungsi untuk buka Details modal
   const handleDetailsClick = (order) => {
     setSelectedOrder(order);
     setShowModal(true);
   };
 
-  // Fungsi untuk tutup modal
   const closeModal = () => {
     setShowModal(false);
     setSelectedOrder(null);
@@ -188,15 +218,50 @@ function OrderList() {
               </div>
 
               {/* Status */}
-              <div className="p-4 bg-white/5 border border-white/10 rounded-lg">
-                <p className="text-[10px] uppercase text-gray-500 font-black tracking-widest mb-2">Current Status</p>
-                <div className="flex items-center gap-3">
-                  <span className="px-4 py-2 bg-lime-400 text-black text-xs font-black rounded-full">
-                    {selectedOrder.status}
-                  </span>
-                  <span className="text-[10px] text-gray-400">
-                    Payment: <span className="text-lime-400 font-bold">{selectedOrder.paymentStatus}</span>
-                  </span>
+              <div className={`p-4 border rounded-lg ${selectedOrder.paymentStatus === 'PAID' ? 'bg-green-500/20 border-green-500/50' : 'bg-white/5 border-white/10'}`}>
+                <p className="text-[10px] uppercase text-gray-500 font-black tracking-widest mb-3">Order & Payment Status</p>
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="px-4 py-2 bg-lime-400 text-black text-xs font-black rounded-full">
+                      {selectedOrder.status}
+                    </span>
+                  </div>
+                  
+                  {/* Payment Status Badge dengan Animasi */}
+                  <div className="flex items-center gap-3">
+                    {selectedOrder.paymentStatus === 'PAID' ? (
+                      <>
+                        <span className="relative flex h-3 w-3">
+                          <span className="animate-pulse absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                        </span>
+                        <span className="px-4 py-2 bg-green-500 text-white text-xs font-black rounded-full">
+                          ✓ SUDAH BAYAR
+                        </span>
+                        <span className="text-[10px] text-green-400 font-bold">Real-Time</span>
+                      </>
+                    ) : selectedOrder.paymentStatus === 'PENDING' ? (
+                      <>
+                        <span className="relative flex h-3 w-3">
+                          <span className="animate-pulse absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span>
+                        </span>
+                        <span className="px-4 py-2 bg-yellow-500/70 text-white text-xs font-black rounded-full">
+                          ⏳ MENUNGGU PEMBAYARAN
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="relative flex h-3 w-3">
+                          <span className="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                        </span>
+                        <span className="px-4 py-2 bg-red-500 text-white text-xs font-black rounded-full">
+                          ✕ PEMBAYARAN GAGAL
+                        </span>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
 

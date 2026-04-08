@@ -1,4 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { useApiUrl } from '../hooks/useApiUrl';
+
+const NGROK_HEADERS = {
+  'ngrok-skip-browser-warning': 'true',
+  'x-ngrok-skip-browser-warning': 'true',
+};
 
 function UserOrderHistory() {
   const [orders, setOrders] = useState([]);
@@ -6,6 +12,7 @@ function UserOrderHistory() {
   const [error, setError] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showBillModal, setShowBillModal] = useState(false);
+  const API_URL = useApiUrl();
 
   useEffect(() => {
     fetchUserOrders();
@@ -25,10 +32,11 @@ function UserOrderHistory() {
 
       const userId = userData._id || userData.id;
 
-      const response = await fetch(`http://localhost:5000/api/payment/user-orders/${userId}`, {
+      const response = await fetch(`${API_URL}/api/payment/user-orders/${userId}`, {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          'Authorization': `Bearer ${token}`,
+          ...NGROK_HEADERS,
+        },
       });
 
       if (!response.ok) throw new Error('Failed to fetch orders');

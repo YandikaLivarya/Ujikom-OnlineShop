@@ -1,4 +1,10 @@
 import React, { useState, useEffect } from 'react'
+import { useApiUrl } from '../hooks/useApiUrl';
+
+const NGROK_HEADERS = {
+  'ngrok-skip-browser-warning': 'true',
+  'x-ngrok-skip-browser-warning': 'true',
+};
 
 function TrackPackage() {
   const [resi, setResi] = useState("");
@@ -7,6 +13,7 @@ function TrackPackage() {
   const [error, setError] = useState(false);
   const [orderData, setOrderData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const API_URL = useApiUrl();
 
   useEffect(() => {
     const lastResi = localStorage.getItem("lastTrackingNumber");
@@ -18,7 +25,9 @@ function TrackPackage() {
   // Fetch order dari backend berdasarkan resi
   const fetchOrderByResi = async (trackingResi) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/payment/order/${trackingResi}`);
+      const response = await fetch(`${API_URL}/api/payment/order/${trackingResi}`, {
+        headers: NGROK_HEADERS,
+      });
       if (!response.ok) throw new Error('Order not found');
       
       const result = await response.json();

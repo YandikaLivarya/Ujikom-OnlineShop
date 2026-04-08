@@ -1,9 +1,16 @@
 import { useState } from "react"  
 import axios from "axios"
 import { useNavigate } from "react-router-dom"  
+import { useApiUrl } from "../hooks/useApiUrl"
+
+const NGROK_HEADERS = {
+  'ngrok-skip-browser-warning': 'true',
+  'x-ngrok-skip-browser-warning': 'true',
+};
 
 const Register = () => {
   const navigator = useNavigate();
+  const API_URL = useApiUrl();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -21,7 +28,9 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/auth/register', formData);
+      await axios.post(`${API_URL}/api/auth/register`, formData, {
+        headers: NGROK_HEADERS,
+      });
       alert("Registration successful!");
 
       navigator('/Auth'); // Redirect to login page after successful registration 

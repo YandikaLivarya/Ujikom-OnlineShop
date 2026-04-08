@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useApiUrl } from "../hooks/useApiUrl";
+
+const NGROK_HEADERS = {
+  'ngrok-skip-browser-warning': 'true',
+  'x-ngrok-skip-browser-warning': 'true',
+};
 
 function Payment() {
   const [cartItems, setCartItems] = useState([]);
@@ -7,6 +13,7 @@ function Payment() {
   const [selectedMethod, setSelectedMethod] = useState("E-Wallet");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const API_URL = useApiUrl();
 
   useEffect(() => {
     // 1. Ambil data keranjang dari localStorage
@@ -81,10 +88,11 @@ function Payment() {
 
       let invoiceResponse;
       try {
-        invoiceResponse = await fetch('http://localhost:5000/api/payment/create-invoice', {
+        invoiceResponse = await fetch(`${API_URL}/api/payment/create-invoice`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            ...NGROK_HEADERS,
           },
           body: JSON.stringify(payload),
         });
@@ -162,10 +170,11 @@ function Payment() {
           paymentMethod: selectedMethod
         };
 
-        const orderResponse = await fetch('http://localhost:5000/api/payment/create-order', {
+        const orderResponse = await fetch(`${API_URL}/api/payment/create-order`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            ...NGROK_HEADERS,
           },
           body: JSON.stringify(orderPayload),
         });

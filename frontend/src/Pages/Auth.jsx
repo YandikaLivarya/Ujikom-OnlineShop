@@ -1,10 +1,17 @@
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react"; // Tambahkan ini untuk mengelola input
+import { useState } from "react";
+import { useApiUrl } from "../hooks/useApiUrl";
+
+const NGROK_HEADERS = {
+  'ngrok-skip-browser-warning': 'true',
+  'x-ngrok-skip-browser-warning': 'true',
+};
 
 function Auth() {
   // 1. Panggil hooks di top-level
   const navigate = useNavigate();
+  const API_URL = useApiUrl();
   
   // 2. Gunakan useState untuk menangkap input (cara yang lebih "React")
   const [email, setEmail] = useState("");
@@ -13,9 +20,11 @@ function Auth() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', { 
-        email, 
-        password 
+      const response = await axios.post(`${API_URL}/api/auth/login`, {
+        email,
+        password,
+      }, {
+        headers: NGROK_HEADERS,
       });
       
       alert("Login successful!");

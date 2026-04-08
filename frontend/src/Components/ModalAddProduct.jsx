@@ -1,5 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
+import { useApiUrl } from "../hooks/useApiUrl";
+
+const NGROK_HEADERS = {
+  "ngrok-skip-browser-warning": "true",
+  "x-ngrok-skip-browser-warning": "true",
+};
 
 function ModalAddProduct({ isOpen, onClose, onRefresh, editData }) {
   const [formData, setFormData] = useState({
@@ -9,18 +15,18 @@ function ModalAddProduct({ isOpen, onClose, onRefresh, editData }) {
     image: "",
     category: "Crew Socks" // Default category agar tidak kosong
   });
+  const API_URL = useApiUrl();
 
-  // Effect untuk mendeteksi apakah modal dibuka untuk EDIT atau TAMBAH
   useEffect(() => {
     if (editData) {
       setFormData(editData);
     } else {
-      setFormData({ 
-        name: "", 
-        price: "", 
-        stock: "", 
-        image: "", 
-        category: "Crew Socks" 
+      setFormData({
+        name: "",
+        price: "",
+        stock: "",
+        image: "",
+        category: "Crew Socks",
       });
     }
   }, [editData, isOpen]);
@@ -33,19 +39,22 @@ function ModalAddProduct({ isOpen, onClose, onRefresh, editData }) {
 
     try {
       if (editData) {
-        // Logika UPDATE (PUT)
-        await axios.put(`http://localhost:5000/api/products/${editData._id}`, formData, {
-          headers: { Authorization: `Bearer ${token}` }
+        await axios.put(`${API_URL}/api/products/${editData._id}`, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            ...NGROK_HEADERS,
+          },
         });
       } else {
-        // Logika TAMBAH BARU (POST)
-        await axios.post("http://localhost:5000/api/products", formData, {
-          headers: { Authorization: `Bearer ${token}` }
+        await axios.post(`${API_URL}/api/products`, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            ...NGROK_HEADERS,
+          },
         });
       }
-      
-      onRefresh(); // Refresh tabel di Dashboard
-      onClose();   // Tutup Modal
+      onRefresh();
+      onClose();
     } catch (error) {
       alert("Gagal memproses data produk");
     }
@@ -89,7 +98,6 @@ function ModalAddProduct({ isOpen, onClose, onRefresh, editData }) {
               <option value="Crew Socks" className="bg-[#1a1a1a]">Crew Socks</option>
               <option value="Ankle Socks" className="bg-[#1a1a1a]">Ankle Socks</option>
               <option value="Limited Edition" className="bg-[#1a1a1a]">Limited Edition</option>
-              <option value="Accessories" className="bg-[#1a1a1a]">Accessories</option>
             </select>
           </div>
 

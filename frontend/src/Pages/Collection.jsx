@@ -1,16 +1,25 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom"; // WAJIB ADA
+import { Link } from "react-router-dom";
+import { useApiUrl } from "../hooks/useApiUrl";
+
+const NGROK_HEADERS = {
+  'ngrok-skip-browser-warning': 'true',
+  'x-ngrok-skip-browser-warning': 'true',
+};
 
 function Collection() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]); // State untuk hasil filter
   const [activeCategory, setActiveCategory] = useState("All Items");
+  const API_URL = useApiUrl();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/products');
+        const res = await axios.get(`${API_URL}/api/products`, {
+          headers: NGROK_HEADERS,
+        });
         setProducts(res.data);
         setFilteredProducts(res.data); // Awalnya tampilkan semua
       } catch (error) {
@@ -50,7 +59,7 @@ function Collection() {
             <div>
               <h4 className="text-xs font-black uppercase tracking-widest text-gray-500 mb-6">Categories</h4>
               <ul className="space-y-3">
-                {['All Items', 'Crew Socks', 'Ankle Socks', 'Limited Drop'].map((cat) => (
+                {['All Items', 'Crew Socks', 'Ankle Socks', 'Limited Edition'].map((cat) => (
                   <li key={cat}>
                     <button 
                       onClick={() => handleFilter(cat)}

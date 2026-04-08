@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Inventory from '../Components/Admin/Inventory'; 
-import OrderList from '../Components/Admin/OrderList'; 
+import OrderList from '../Components/Admin/OrderList';
+import UserManagement from '../Components/Admin/UserManagement'; 
 
 function DashboardAdmin() {
   const [activeMenu, setActiveMenu] = useState('inventory');
@@ -56,6 +57,14 @@ function DashboardAdmin() {
               <span className="text-lg">🛒</span> 
               <span className="hidden md:block font-black text-[10px] uppercase tracking-widest">Orders</span>
             </button>
+
+            <button 
+              onClick={() => setActiveMenu('users')}
+              className={`w-full p-4 rounded-xl flex items-center gap-3 transition-all duration-300 ${activeMenu === 'users' ? 'bg-lime-400 text-black shadow-[0_0_20px_rgba(163,251,46,0.2)]' : 'hover:bg-white/5 text-gray-400'}`}
+            >
+              <span className="text-lg">👥</span> 
+              <span className="hidden md:block font-black text-[10px] uppercase tracking-widest">Users</span>
+            </button>
           </nav>
         </div>
 
@@ -77,7 +86,7 @@ function DashboardAdmin() {
         <div className="mb-8">
           <p className="text-[10px] text-lime-400 font-mono tracking-[0.4em] uppercase mb-1">// System/Control</p>
           <h2 className="text-3xl font-black uppercase italic tracking-tighter">
-            {activeMenu === 'inventory' ? 'Product Inventory' : 'Incoming Orders'}
+            {activeMenu === 'inventory' ? 'Product Inventory' : activeMenu === 'orders' ? 'Incoming Orders' : 'User Management'}
           </h2>
         </div>
 
@@ -85,8 +94,10 @@ function DashboardAdmin() {
         <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
           {activeMenu === 'inventory' ? (
             <Inventory />
-          ) : (
+          ) : activeMenu === 'orders' ? (
             <OrderList /> 
+          ) : (
+            <UserManagement />
           )}
         </div>
       </main>

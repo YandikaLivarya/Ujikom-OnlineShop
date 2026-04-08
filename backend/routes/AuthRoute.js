@@ -17,4 +17,11 @@ router.put('/update', auth, AuthController.updateprofile);
 // Alamat: PUT /api/auth/password (Sesuai panggilan axios.put di frontend)
 router.put('/password', auth, AuthController.changepassword);
 
+// 3. Admin Routes (User Management)
+// Alamat: GET /api/auth/all-users
+router.get('/all-users', AuthController.getAllUsers);
+
+// Alamat: DELETE /api/auth/user/:userId
+router.delete('/user/:userId', AuthController.deleteUser);
+
 module.exports = router;

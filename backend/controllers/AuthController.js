@@ -87,4 +87,26 @@ exports.changepassword = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
+// GET ALL USERS (Admin only)
+exports.getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find().select('-password').sort({ createdAt: -1 });
+        res.json({ success: true, data: users, total: users.length });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+};
+
+// DELETE USER (Admin only)
+exports.deleteUser = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const user = await User.findByIdAndDelete(userId);
+        if (!user) return res.status(404).json({ success: false, message: "User tidak ditemukan" });
+        res.json({ success: true, message: "User berhasil dihapus" });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+};
     

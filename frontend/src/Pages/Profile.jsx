@@ -1,23 +1,33 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import UserOrderHistory from '../Components/UserOrderHistory';
+import { useApiUrl } from '../hooks/useApiUrl';
+
+const NGROK_HEADERS = {
+  'ngrok-skip-browser-warning': 'true',
+  'x-ngrok-skip-browser-warning': 'true',
+};
 
 const Profile = () => {
     const [user, setUser] = useState({ username: '', email: '' });
     const [passwords, setPasswords] = useState({ oldPassword: '', newPassword: '' });
     const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState('profile');
+    const API_URL = useApiUrl();
 
     useEffect(() => {
         const fetchProfile = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const res = await axios.get('http://localhost:5000/api/auth/profile', {
-                    headers: { Authorization: `Bearer ${token}` }
+                const res = await axios.get(`${API_URL}/api/auth/profile`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        ...NGROK_HEADERS,
+                    },
                 });
                 setUser(res.data);
             } catch (err) {
-                console.error("Gagal ambil profil");
+                console.error('Gagal ambil profil');
             }
         };
         fetchProfile();
@@ -28,8 +38,11 @@ const Profile = () => {
         setLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.put('http://localhost:5000/api/auth/update', user, {
-                headers: { Authorization: `Bearer ${token}` }
+            const res = await axios.put(`${API_URL}/api/auth/update`, user, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    ...NGROK_HEADERS,
+                },
             });
             
             localStorage.setItem('user', JSON.stringify(res.data));
@@ -45,8 +58,11 @@ const Profile = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');
-            await axios.put('http://localhost:5000/api/auth/password', passwords, {
-                headers: { Authorization: `Bearer ${token}` }
+            await axios.put(`${API_URL}/api/auth/password`, passwords, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    ...NGROK_HEADERS,
+                },
             });
             alert("Password changed successfully!");
             setPasswords({ oldPassword: '', newPassword: '' });

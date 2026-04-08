@@ -1,14 +1,23 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useApiUrl } from "../hooks/useApiUrl";
+
+const NGROK_HEADERS = {
+  'ngrok-skip-browser-warning': 'true',
+  'x-ngrok-skip-browser-warning': 'true',
+};
 
 function Katalog() {
   const [products, setProducts] = useState([]);
+  const API_URL = useApiUrl();
 
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/products');
+        const res = await axios.get(`${API_URL}/api/products`, {
+          headers: NGROK_HEADERS,
+        });
         // Ambil 4 produk terbaru saja untuk halaman utama
         setProducts(res.data.slice(0, 4));
       } catch (error) {
