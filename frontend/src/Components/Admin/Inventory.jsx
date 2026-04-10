@@ -27,15 +27,13 @@ function Inventory() {
 
   useEffect(() => {
     fetchProducts();
-  }, [API_URL]); // Tambahkan API_URL sebagai dependency
+  }, [API_URL]);
 
-  // Handler Buka Modal Tambah
   const handleAddNew = () => {
     setSelectedProduct(null);
     setIsModalOpen(true);
   };
 
-  // Handler Buka Modal Edit
   const handleEdit = (product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
@@ -106,7 +104,20 @@ function Inventory() {
                   <tr key={item._id} className="hover:bg-white/5 transition group">
                     <td className="px-6 py-4 flex items-center gap-4">
                       <div className="w-12 h-12 bg-[#1a1a1a] rounded-xl overflow-hidden border border-white/10">
-                        {item.image ? <img src={item.image} className="object-cover w-full h-full" alt={item.name} /> : <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">-</div>}
+                        {item.image ? (
+                          <img 
+                            src={`${API_URL}/uploads/${item.image.split('/').pop()}?ngrok-skip-browser-warning=true`} 
+                            className="object-cover w-full h-full" 
+                            alt={item.name} 
+                            loading="lazy"
+                            onError={(e) => { 
+                              e.target.onerror = null; 
+                              e.target.src = "https://placehold.co/400x400/1a1a1a/ffffff?text=Socks";
+                            }}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">-</div>
+                        )}
                       </div>
                       <span className="font-bold uppercase tracking-tighter">{item.name}</span>
                     </td>

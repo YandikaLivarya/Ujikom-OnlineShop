@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AddressModal from '../Components/AddressModal'; // Pastikan sudah buat file ini
+import { useApiUrl } from "../hooks/useApiUrl";
 
 function Cart() {
   const navigate = useNavigate();
+  const API_URL = useApiUrl();
   const [cartItems, setCartItems] = useState([]);
+  const placeholderImage = "https://placehold.co/400x400/1a1a1a/ffffff?text=Socks";
+  const getProductImageSrc = (image) =>
+    `${API_URL}/uploads/${image.split("/").pop().split("?")[0]}?ngrok-skip-browser-warning=true`;
   
   // State untuk Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -68,7 +73,20 @@ function Cart() {
               {cartItems.map((item) => (
                 <div key={item._id} className="flex gap-6 bg-white/5 p-4 rounded-2xl border border-white/5 relative group">
                   <div className="w-24 h-32 md:w-32 md:h-40 bg-[#1a1a1a] rounded-xl overflow-hidden flex-shrink-0">
-                    {item.image ? <img src={item.image} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt={item.name} /> : <div className="w-full h-full flex items-center justify-center text-gray-600">-</div>}
+                    {item.image ? (
+                      <img
+                        src={getProductImageSrc(item.image)}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        alt={item.name}
+                        loading="lazy"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = placeholderImage;
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-600">-</div>
+                    )}
                   </div>
 
                   <div className="flex flex-col justify-between py-2 w-full">

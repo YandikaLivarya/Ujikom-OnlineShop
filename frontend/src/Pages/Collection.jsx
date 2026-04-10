@@ -13,6 +13,9 @@ function Collection() {
   const [filteredProducts, setFilteredProducts] = useState([]); // State untuk hasil filter
   const [activeCategory, setActiveCategory] = useState("All Items");
   const API_URL = useApiUrl();
+  const placeholderImage = "https://placehold.co/400x400/1a1a1a/ffffff?text=Socks";
+  const getProductImageSrc = (image) =>
+    `${API_URL}/uploads/${image.split("/").pop().split("?")[0]}?ngrok-skip-browser-warning=true`;
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -108,9 +111,14 @@ function Collection() {
                     <div className="relative aspect-[4/5] overflow-hidden bg-[#1a1a1a] rounded-2xl border border-white/5 transition-all duration-500 group-hover:border-lime-400/50">
                       {item.image ? (
                         <img 
-                          src={item.image} 
+                          src={getProductImageSrc(item.image)} 
                           alt={item.name}
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                          loading="lazy"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = placeholderImage;
+                          }}
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-white/5 text-gray-600">No Image</div>

@@ -14,6 +14,9 @@ function DetailProduct() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const API_URL = useApiUrl();
+  const placeholderImage = "https://placehold.co/400x400/1a1a1a/ffffff?text=Socks";
+  const getProductImageSrc = (image) =>
+    `${API_URL}/uploads/${image.split("/").pop().split("?")[0]}?ngrok-skip-browser-warning=true`;
   const addToCart = () => {
   // 1. Ambil data keranjang yang sudah ada di localStorage, atau buat array kosong jika belum ada
   const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -91,9 +94,14 @@ function DetailProduct() {
             <div className="aspect-[4/5] bg-[#1a1a1a] rounded-3xl overflow-hidden border border-white/5">
               {product.image ? (
                 <img 
-                  src={product.image} 
+                  src={getProductImageSrc(product.image)} 
                   alt={product.name} 
                   className="w-full h-full object-cover shadow-2xl transition-transform duration-700 hover:scale-105"
+                  loading="lazy"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = placeholderImage;
+                  }}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-white/5 text-gray-600 text-lg">Product Image Not Available</div>
@@ -103,7 +111,20 @@ function DetailProduct() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="aspect-square bg-[#1a1a1a] rounded-xl overflow-hidden border border-white/5 opacity-50 hover:opacity-100 transition">
-                  {product.image ? <img src={product.image} alt="Angle" className="w-full h-full object-cover grayscale" /> : <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">-</div>}
+                  {product.image ? (
+                    <img
+                      src={getProductImageSrc(product.image)}
+                      alt="Angle"
+                      className="w-full h-full object-cover grayscale"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = placeholderImage;
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">-</div>
+                  )}
                 </div>
               ))}
             </div>
@@ -137,30 +158,15 @@ function DetailProduct() {
               </p>
             </div>
 
-            {/* Pilihan Ukuran */}
-            <div className="mb-10">
-              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-gray-500 mb-4">Select Size</h3>
-              <div className="flex gap-3">
-                {['All Size', 'M', 'L'].map((size) => (
-                  <button key={size} className="border border-white/10 px-6 py-2 rounded-full text-xs font-black hover:bg-lime-400 hover:text-black hover:border-lime-400 transition-all duration-300 uppercase">
-                    {size}
-                  </button>
-                ))}
-              </div>
-            </div>
-
             {/* Tombol Add to Cart */}
-            <div className="flex gap-4">
+            <div>
               <button onClick={addToCart}
                 disabled={product.stock <= 0}
-                className={`flex-grow font-black py-5 rounded-2xl uppercase tracking-widest transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.05)] ${
+                className={`w-full font-black py-5 rounded-2xl uppercase tracking-widest transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.05)] ${
                   product.stock > 0 ? "bg-white text-black hover:bg-lime-400" : "bg-white/5 text-gray-600 cursor-not-allowed"
                 }`}
               >
                 {product.stock > 0 ? "Add to Bag" : "Sold Out"}
-              </button>
-              <button className="px-6 border border-white/10 rounded-2xl hover:bg-white/5 transition group">
-                <span className="group-hover:scale-125 block transition">❤️</span>
               </button>
             </div>
 

@@ -10,7 +10,7 @@ const NGROK_HEADERS = {
 function Payment() {
   const [cartItems, setCartItems] = useState([]);
   const [shippingInfo, setShippingInfo] = useState(null);
-  const [selectedMethod, setSelectedMethod] = useState("E-Wallet");
+  const [selectedMethod] = useState("ONLINE PAYMENT");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const API_URL = useApiUrl();
@@ -251,42 +251,20 @@ function Payment() {
             <div className="space-y-4">
               <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] ml-1">Select Payment Method</p>
 
-              
-              {/* E-Wallet */}
-              <div 
-                onClick={() => setSelectedMethod("E-Wallet")}
-                className={`p-6 bg-white/5 border rounded-2xl flex items-center justify-between cursor-pointer transition-all duration-300 ${selectedMethod === "E-Wallet" ? "border-lime-400 bg-lime-400/5 shadow-[0_0_20px_rgba(163,251,46,0.05)]" : "border-white/10 opacity-60 hover:opacity-100"}`}
+              <div
+                className="p-6 bg-white/5 border rounded-2xl flex items-center justify-between transition-all duration-300 border-lime-400 bg-lime-400/5 shadow-[0_0_20px_rgba(163,251,46,0.05)]"
               >
                 <div className="flex items-center gap-5">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all ${selectedMethod === "E-Wallet" ? "bg-lime-400 text-black" : "bg-white/10"}`}>
-                    📱
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all bg-lime-400 text-black">
+                    💳
                   </div>
                   <div>
-                    <h4 className="font-bold uppercase tracking-tight text-sm md:text-base">E-Wallet (QRIS)</h4>
-                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest mt-1">Gopay, OVO, Dana, ShopeePay</p>
+                    <h4 className="font-bold uppercase tracking-tight text-sm md:text-base">ONLINE PAYMENT</h4>
+                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest mt-1">Pay securely via QRIS, Virtual Account, or Credit Card</p>
                   </div>
                 </div>
-                <div className={`w-6 h-6 rounded-full border-4 flex items-center justify-center transition-colors ${selectedMethod === "E-Wallet" ? "border-lime-400" : "border-white/10"}`}>
-                  {selectedMethod === "E-Wallet" && <div className="w-2.5 h-2.5 bg-lime-400 rounded-full"></div>}
-                </div>
-              </div>
-
-              {/* Virtual Account */}
-              <div 
-                onClick={() => setSelectedMethod("VA")}
-                className={`p-6 bg-white/5 border rounded-2xl flex items-center justify-between cursor-pointer transition-all duration-300 ${selectedMethod === "VA" ? "border-lime-400 bg-lime-400/5 shadow-[0_0_20px_rgba(163,251,46,0.05)]" : "border-white/10 opacity-60 hover:opacity-100"}`}
-              >
-                <div className="flex items-center gap-5">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all ${selectedMethod === "VA" ? "bg-lime-400 text-black" : "bg-white/10"}`}>
-                    🏦
-                  </div>
-                  <div>
-                    <h4 className="font-bold uppercase tracking-tight text-sm md:text-base">Virtual Account</h4>
-                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest mt-1">BCA, Mandiri, BNI, BRI</p>
-                  </div>
-                </div>
-                <div className={`w-6 h-6 rounded-full border-4 flex items-center justify-center transition-colors ${selectedMethod === "VA" ? "border-lime-400" : "border-white/10"}`}>
-                  {selectedMethod === "VA" && <div className="w-2.5 h-2.5 bg-lime-400 rounded-full"></div>}
+                <div className="w-6 h-6 rounded-full border-4 flex items-center justify-center transition-colors border-lime-400">
+                  <div className="w-2.5 h-2.5 bg-lime-400 rounded-full"></div>
                 </div>
               </div>
             </div>
@@ -329,7 +307,7 @@ function Payment() {
                 disabled={isLoading}
                 className={`w-full ${isLoading ? 'bg-gray-600 cursor-not-allowed' : 'bg-lime-400 hover:bg-white hover:scale-[1.02]'} text-black font-black py-5 rounded-2xl uppercase tracking-widest text-sm active:scale-[0.98] transition-all duration-300 shadow-[0_15px_40px_rgba(163,251,46,0.2)]`}
               >
-                {isLoading ? 'Processing...' : 'Confirm & Pay with Xendit'}
+                {isLoading ? 'Processing...' : 'PROCEED TO CHECKOUT'}
               </button>
 
               <div className="mt-8 flex flex-col items-center gap-2">
