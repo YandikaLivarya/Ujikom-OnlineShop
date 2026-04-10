@@ -101,25 +101,18 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
   }
   
   try {
-    // Construct base URL: ALWAYS prioritize ngrok headers first
-    let baseUrl;
-    const forwardedHost = req.headers['x-forwarded-host'];
-    const forwardedProto = req.headers['x-forwarded-proto'] || 'https';
-    
-    if (forwardedHost) {
-      // We're behind ngrok - use ngrok URL
-      baseUrl = `${forwardedProto}://${forwardedHost}`;
-    } else {
-      // No ngrok: use actual request host (backend URL)
-      baseUrl = `${req.protocol === 'http' ? 'http' : 'https'}://${req.get('host')}`;
-    }
-    
+    // Construct base URL using the incoming host/protocol headers.
+    // This is more reliable for ngrok and HTTPS setups.
+    const forwardedHost = req.headers['x-forwarded-host'] || req.headers.host;
+    const forwardedProto = req.headers['x-forwarded-proto'] || req.protocol;
+    const baseUrl = `${forwardedProto}://${forwardedHost}`;
+
     // Build complete file URL
     const fileUrl = `${baseUrl}/uploads/${req.file.filename}`;
-    
+
     console.log('✅ File uploaded:', req.file.filename);
     console.log('🔗 File URL:', fileUrl);
-    
+
     res.json({ 
       message: 'File uploaded successfully', 
       imageUrl: fileUrl, 
